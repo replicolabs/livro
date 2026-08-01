@@ -21,8 +21,15 @@ RUN git clone --depth 1 https://github.com/zeroclaw-labs/zeroclaw.git .
 # at build time, rather than us hardcoding/duplicating that list here --
 # if ZeroClaw's feature set changes, this Dockerfile doesn't need updating.
 # --apps none: we don't need zerocode or other CLI apps in this image.
+#
+# No --prefix here -- confirmed live (a real deploy failure) that install.sh
+# only redirects CARGO_HOME under PREFIX via `${CARGO_HOME:-$PREFIX/.cargo}`,
+# which never fires because the official rust:*-bookworm image already
+# exports CARGO_HOME=/usr/local/cargo. cargo install therefore always lands
+# at $CARGO_HOME/bin regardless of --prefix, so the binary is copied from
+# there below instead of pretending --prefix controls the install path.
 RUN ./install.sh --source --preset full --skip-quickstart --apps none \
-        --prefix /build/zeroclaw-install --no-modify-path
+        --no-modify-path
 
 # ── Stage 2: runtime image ───────────────────────────────────────────────
 FROM python:3.12-slim-bookworm
@@ -31,7 +38,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates bash \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=zeroclaw-builder /build/zeroclaw-install/bin/zeroclaw /usr/local/bin/zeroclaw
+COPY --from=zeroclaw-builder /usr/local/cargo/bin/zeroclaw /usr/local/bin/zeroclaw
 
 WORKDIR /app
 

@@ -1,0 +1,10 @@
+[sop]
+name = "monthly_reminder"
+description = "Proactively remind the freelancer of their Carne-Leao liability before the DARF deadline, and ask about income Livro cannot see."
+version = "0.1.0"
+max_concurrent = 1
+admission_policy = "hold"
+
+[[triggers]]
+type = "cron"
+expression = "0 9 * * *"

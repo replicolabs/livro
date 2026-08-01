@@ -1,0 +1,10 @@
+[sop]
+name = "watch_payment"
+description = "Poll open Solana Pay invoices for incoming USDC, classify the receipt, book it, and record the freelancer's disposition instruction."
+version = "0.1.0"
+max_concurrent = 1
+admission_policy = "hold"
+
+[[triggers]]
+type = "cron"
+expression = "*/5 * * * *"

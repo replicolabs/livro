@@ -1,0 +1,14 @@
+{
+  "_comment": "Copy this to <agent-workspace>/workspace/config/user_preferences.json. This is CLAUDE.md Section 4.9's user_preferences object -- freelancer-controlled, editable by the freelancer through conversation (e.g. 'always convert to BRL from now on') rather than by hand-editing this file, though hand-editing works too since it's a plain JSON file in their own workspace.",
+  "standing_disposition_preference": null,
+  "standing_disposition_preference_note": "null until the freelancer sets one (e.g. 'convert_to_brl', 'hold_as_usdc'). While null, watch_payment's Step 3 must ask via ask_user for every payment -- CLAUDE.md Section 1.2: Livro never assumes.",
+  "deductions": {
+    "inss_monthly": "0",
+    "dependents_count": 0,
+    "alimony_monthly": "0",
+    "livro_caixa_expenses_monthly": "0"
+  },
+  "reminder_lead_days": 5,
+  "language": "pt-BR",
+  "language_note": "docs/language.md Section 1: default pt-BR for every new user, no onboarding question. Only ever changed via handle_language_switch (an explicit, direct request detected by rendering/rendering/language_switch.py), never inferred from message content, client names, or device locale. Every skill/SOP that sends a message reads this field before rendering -- see the 'Language' section in each SKILL.md/SOP.md."
+}

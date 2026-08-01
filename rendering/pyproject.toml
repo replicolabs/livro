@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "livro-rendering"
+version = "0.1.0"
+description = "Pure, independently-testable bilingual (pt-BR/en) message rendering for Livro, per docs/language.md"
+requires-python = ">=3.10"
+
+[tool.setuptools]
+packages = ["rendering"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

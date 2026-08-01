@@ -1,0 +1,10 @@
+[sop]
+name = "backup_export"
+description = "Weekly export of the ledger to a destination the freelancer controls, so a lost or broken device doesn't cost years of tax records."
+version = "0.1.0"
+max_concurrent = 1
+admission_policy = "hold"
+
+[[triggers]]
+type = "cron"
+expression = "0 8 * * 0"

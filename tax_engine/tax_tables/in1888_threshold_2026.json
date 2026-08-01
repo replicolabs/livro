@@ -1,0 +1,8 @@
+{
+  "effective_from": "2026-07-01",
+  "source_url": "IN RFB no. 2.291/2025 (DOU 2025-11-17), revoking IN 1888/2019 and IN 1899/2019 - identified via consistent secondary aggregators (Legisweb, Hondatar, Michel P2P); primary text at normas.receita.fazenda.gov.br / in.gov.br DOU archive was NOT directly fetched this session (403/unreachable)",
+  "verified_on": "2026-07-30",
+  "verified": false,
+  "verification_caveat": "THIS IS THE WEAKEST-SOURCED FIGURE IN THE ENGINE. R$30,000/month was the IN 1888/2019 threshold; research found consistent secondary-source claims that IN RFB 2.291/2025 raised it to R$35,000/month for non-exchange/foreign-platform crypto operations, with the monthly DeCripto filing mechanics (Arts. 7, 9, 18) taking effect 2026-07-01 -- meaning as of today (2026-07-30) this should already be in force. However, no primary text (normas.receita.fazenda.gov.br or the DOU archive) was independently fetched and quoted. Get an accountant or a direct primary-source read before relying on this threshold for real compliance monitoring; threshold_watch should still fire proactively at 80% of whichever figure is configured, but the figure itself needs confirmation.",
+  "monthly_threshold_brl": 35000.00
+}

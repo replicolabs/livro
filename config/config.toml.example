@@ -1,0 +1,95 @@
+# Livro -- example ZeroClaw config (secrets redacted).
+#
+# Field names below were checked directly against the ZeroClaw source
+# (crates/zeroclaw-config/src/schema.rs, crates/zeroclaw-config/src/autonomy.rs)
+# as of 2026-07-30, not just the docs -- see DEVIATIONS.md Section 5b.
+#
+# Set real secrets (bot_token, access_token, rpc api key, etc.) through
+# `zeroclaw config set` (masked prompt) or the gateway/zerocode UI, never by
+# pasting them into this file. This file only shows the *shape*.
+
+[sop]
+# MUST be an absolute path. Confirmed live (2026-07-31): unlike
+# skill_bundles.<alias>.directory (which resolves correctly against the
+# install root regardless of CWD), an explicitly-set sop.sops_dir resolves
+# relative to the process's CURRENT WORKING DIRECTORY at the moment each
+# `zeroclaw` command runs -- `zeroclaw sop validate` finds every SOP when run
+# from ~/.zeroclaw, and finds NONE when run from anywhere else. A relative
+# value here works by accident only if you always launch zeroclaw from the
+# same directory; use an absolute path so `zeroclaw daemon`/`channel start`
+# find the SOPs no matter how they're launched (systemd unit, cron, etc.).
+# See DEVIATIONS.md Section 9.
+sops_dir = "/home/YOUR_USER/.zeroclaw/shared/sops"
+maintenance_interval_secs = 60       # default; the cron trigger's dispatch cadence
+
+[skill_bundles.livro]
+directory = "shared/skills/livro"    # resolves to <install>/shared/skills/livro by default
+
+# ── Primary channel: WhatsApp Web (personal account, no Meta Business account,
+#    no public webhook needed -- see DEVIATIONS.md Section 4 for why this mode
+#    was chosen over WhatsApp Cloud API). Requires a build with the
+#    `whatsapp-web` feature, which standard pre-built binaries include.
+[channels.whatsapp.default]
+enabled = true
+session_path = "data/whatsapp/wa.db"   # keep on persistent storage; QR/pair-code links on first start
+mode = "personal"
+dm_policy = "allowlist"
+group_policy = "ignore"                 # Livro is a 1:1 tool for this freelancer, not a group bot
+self_chat_mode = false
+
+# ── Documented fallback channel: Telegram (long polling, no public URL).
+# Enable this instead of / alongside WhatsApp if WhatsApp Web pairing proves
+# unstable during setup or the showcase recording.
+[channels.telegram.default]
+enabled = false
+# bot_token set via env var (never typed into this file or a chat/tool log):
+#   ZEROCLAW_CHANNELS__TELEGRAM__DEFAULT__BOT_TOKEN=...  (run in your own shell)
+# or interactively: zeroclaw config set channels.telegram.default.bot_token
+
+[agents.livro]
+enabled = true
+channels = ["whatsapp.default"]         # add "telegram.default" too if using both
+model_provider = "anthropic.default"    # or your configured provider; see providers/catalog.md
+risk_profile = "livro_supervised"
+runtime_profile = "default"
+skill_bundles = ["livro"]
+cron_jobs = []                          # SOPs are cron-triggered directly via [sop]; no separate cron_jobs needed here
+
+[agents.livro.workspace]
+# Defaults to agents/livro/workspace/ -- the jailed sandbox where
+# workspace/ledger/*.jsonl, workspace/config/user_preferences.json, and
+# workspace/backups/ actually live. See DEVIATIONS.md Section 1 for why the
+# ledger lives here instead of in a bespoke database.
+
+[risk_profiles.livro_supervised]
+level = "supervised"                    # low tools run, medium asks, high blocks -- CLAUDE.md Section 7's approval checkpoint
+require_approval_for_medium_risk = true
+block_high_risk_commands = true
+workspace_only = true
+auto_approve = ["file_read", "memory_recall", "ask_user"]
+always_ask = ["shell", "http_request", "escalate_to_human"]
+# excluded_tools / allowed_tools left empty here (no extra restriction beyond
+# the level + auto_approve/always_ask above); tighten per your own comfort.
+
+# ── Model provider (example shape only -- fill in your own).
+# See docs/book/src/providers/catalog.md for the full provider list.
+# Real TOML path confirmed directly in source (#[prefix = "providers.models.anthropic"]
+# on AnthropicModelProviderConfig, crates/zeroclaw-config/src/schema.rs) --
+# NOT "model_providers.*", which is what ZeroClaw's OWN code comment on
+# AliasedAgentConfig.model_provider says (a stale comment; the #[prefix]
+# attribute is what actually drives config parsing, so it wins).
+[providers.models.anthropic.default]
+enabled = true
+model = "claude-sonnet-5"
+# api_key set via env var, never typed into this file or a chat/tool log:
+#   ZEROCLAW_PROVIDERS__MODELS__ANTHROPIC__DEFAULT__API_KEY=sk-...  (run in your own shell)
+# or interactively: zeroclaw config set providers.models.anthropic.default.api_key
+
+# NOTE: ZeroClaw's Config struct (crates/zeroclaw-config/src/schema.rs) has no
+# generic passthrough/"custom" table -- an invented `[custom.livro]` block
+# here would just be silently dropped by the config loader, not exposed to
+# skills. App-specific settings (Solana RPC URL, USDC mint, backup git
+# remote, reminder_lead_days, standing disposition preference, deductions)
+# instead live in workspace/config/app_settings.json, read via `file_read`
+# by skill/SOP step instructions -- see config/app_settings.json.example in
+# this repo and SETUP.md for how to copy it into the agent's workspace.

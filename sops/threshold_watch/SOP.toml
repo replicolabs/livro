@@ -1,0 +1,10 @@
+[sop]
+name = "threshold_watch"
+description = "Proactively flag approaching the IN 1888 / DeCripto monthly self-report threshold before it is crossed."
+version = "0.1.0"
+max_concurrent = 1
+admission_policy = "coalesce"
+
+[[triggers]]
+type = "cron"
+expression = "0 */6 * * *"

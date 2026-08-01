@@ -1,0 +1,26 @@
+{
+  "effective_from": "2026-01-01",
+  "source_url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas/2026 (brackets/dependent deduction/simplified discount); https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/pagamento/carne-leao/deducoes (itemized deductions)",
+  "verified_on": "2026-07-30",
+  "verified": true,
+  "verification_caveat": "Bracket thresholds, rates, per-bracket deductions, and the R$189.59/month dependent deduction were fetched verbatim from raw gov.br HTML (high confidence) -- this resolves the R$896.00 vs R$908.73 top-bracket dispute in favor of R$908.73 (R$896.00 was the obsolete pre-2024 figure). Table is grounded in Lei 15.191/2025 per the page's own footnote. The sliding_reduction sub-block below is now ALSO verified: reconstructed from Receita's own worked-examples page and confirmed by independently reproducing all 5 of its examples exactly (see tests/test_carne_leao.py::test_receita_worked_example_*). One caveat on method: the worked-examples page content was retrieved via a markdown-rendering fetch, not confirmed against the page's raw HTML byte-for-byte (a follow-up raw curl of the page didn't surface the example text directly, likely served via an embedded document viewer) -- the reproduced arithmetic across 5 independent examples matching exactly is strong corroborating evidence, but a human should still glance at the live page before this is relied on for a real DARF.",
+  "dependent_deduction": 189.59,
+  "simplified_discount_cap_monthly": 607.20,
+  "simplified_discount_note": "Per Receita: 'o desconto simplificado mensal, que substitui todas as deducoes legais permitidas, e de 25% do limite maximo da tabela progressiva mensal' -- this flat amount REPLACES itemized deductions entirely (never combined); compute_carne_leao takes max(itemized_total, this) since a larger deduction never increases tax on this monotonic table.",
+  "brackets": [
+    { "up_to": 2428.80, "rate": 0.0, "deduction": 0.0 },
+    { "up_to": 2826.65, "rate": 0.075, "deduction": 182.16 },
+    { "up_to": 3751.05, "rate": 0.15, "deduction": 394.16 },
+    { "up_to": 4664.68, "rate": 0.225, "deduction": 675.49 },
+    { "up_to": null, "rate": 0.275, "deduction": 908.73 }
+  ],
+  "sliding_reduction": {
+    "verified": true,
+    "law": "Lei 15.270/2025 (Art. 3-A monthly mechanism), published 2025-11-27, effects from 2026-01-01 (Art. 8)",
+    "source_url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas/exemplos-de-aplicacao-da-lei-15-270-2025",
+    "upper_bound": 7350.00,
+    "formula_intercept": 978.62,
+    "formula_slope": 0.133145,
+    "mechanism_note": "reduction = max(0, 978.62 - 0.133145 * GROSS_monthly_income), capped at tax_before (never a rebate exceeding the tax itself), and zero entirely above upper_bound (R$7,350.00). Per Receita's own clarification: 'se utiliza... o valor do salario, e nao o da base de calculo' -- the formula's income variable is GROSS income, not the post-deduction taxable base. There is no separate 'income <=5000 => zero' rule as a distinct mechanism; that behavior falls out naturally from this one continuous formula for typical incomes in that range (confirmed exactly at gross=5000 in Receita's own Example 3: formula gives R$312.89, which happens to exactly equal tax_before on that example's post-deduction base, both derived independently and cross-checked here). An earlier version of this table described a two-piece rule with a hard cliff at R$5,000; that was based on feeding the post-deduction base into the formula instead of gross income, which was wrong -- see DEVIATIONS.md Section 9 and tax_engine/carne_leao.py::_sliding_reduction for the full correction history."
+  }
+}

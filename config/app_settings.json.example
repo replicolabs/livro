@@ -1,0 +1,11 @@
+{
+  "_comment": "Copy this to <agent-workspace>/workspace/config/app_settings.json and fill in your own values. Never commit the real file if it ends up containing anything sensitive -- these are non-secret settings (RPC URL, mint address, backup remote), not credentials, but treat the path as workspace state, not source-controlled config.",
+  "solana_rpc_url": "https://api.mainnet-beta.solana.com",
+  "solana_rpc_url_note": "CLAUDE.md Section 6.2: never hardcode a single provider in code -- this file is the one place it's set. Replace with your own or a paid RPC for reliability.",
+  "usdc_mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  "usdc_mint_note": "Confirm this is still the current mainnet USDC mint before relying on it -- mint addresses are exactly the kind of fact that should come from config, not training data (see draft_invoice skill).",
+  "backup_git_remote": "git@example.com:you/livro-backups.git",
+  "backup_git_remote_note": "Private git remote the freelancer controls. Used by the backup_export SOP's shell steps. Must already be configured with push access before backup_export's first scheduled run.",
+  "invoice_retention_days": 90,
+  "invoice_retention_days_note": "How long watch_payment keeps polling a reference key past its nominal expiry, so a late_after_expiry payment is still caught (CLAUDE.md Section 4.6)."
+}

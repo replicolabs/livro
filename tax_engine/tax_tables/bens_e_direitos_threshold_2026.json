@@ -1,0 +1,13 @@
+{
+  "effective_from": "2026-01-01",
+  "source_url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/preenchimento/manual-mir/patrimonio/bens-financeiros",
+  "verified_on": "2026-07-30",
+  "verified": true,
+  "verification_caveat": "The R$5,000.00 acquisition-cost (not market value) threshold per crypto 'species', triggering mandatory Bens e Direitos line-item declaration under Grupo 08 - Criptoativos, was fetched and quoted VERBATIM from the raw gov.br manual page: 'Todos os bens do tipo Criptoativos devem ser declarados se o valor de aquisicao for igual ou superior a R$ 5.000,00, para a mesma especie.' High confidence on the threshold itself. The specific numeric code below for the Stablecoins sub-category is LOWER confidence (secondary blogs only, not the DIRPF software's own dropdown) -- see asset_code_verified.",
+  "single_asset_cost_basis_threshold_brl": 5000.00,
+  "asset_group": "Grupo 08 - Criptoativos",
+  "asset_subcategory": "Stablecoins",
+  "asset_code_hint": "03",
+  "asset_code_verified": false,
+  "asset_code_caveat": "The numeric code '03' for the Stablecoins line under Grupo 08 came only from secondary sources, not a verbatim primary quote. Confirm against the actual DIRPF filing software's dropdown at filing time -- do not print this code as final in an export without that check."
+}

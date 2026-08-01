@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "livro-ledger"
+version = "0.1.0"
+description = "Structural validation for Livro's append-only ledger records (CLAUDE.md Section 4/7)"
+requires-python = ">=3.10"
+
+[tool.setuptools]
+packages = ["ledger"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

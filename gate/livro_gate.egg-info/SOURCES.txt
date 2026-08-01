@@ -1,0 +1,13 @@
+pyproject.toml
+gate/__init__.py
+gate/app.py
+gate/forwarding.py
+gate/parsing.py
+livro_gate.egg-info/PKG-INFO
+livro_gate.egg-info/SOURCES.txt
+livro_gate.egg-info/dependency_links.txt
+livro_gate.egg-info/requires.txt
+livro_gate.egg-info/top_level.txt
+tests/test_app.py
+tests/test_forwarding.py
+tests/test_parsing.py

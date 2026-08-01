@@ -1,0 +1,11 @@
+{
+  "effective_from": "2024-01-01",
+  "source_url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/lei/l14754.htm (Lei 14.754/2023, Art. 8) - identified but not personally fetched verbatim this session, only via consistent secondary-source consensus (KPMG-style commentary)",
+  "verified_on": "2026-07-30",
+  "verified": false,
+  "verification_caveat": "Flat 15% rate (paid annually via DAA, not monthly DARF) and no-monthly-exemption regime for foreign-custodied crypto/self-custody wallets are consistent across every secondary source checked, and the primary citation (Lei 14.754/2023, reclassifying foreign-held 'ativos virtuais e carteiras digitais' as 'aplicacoes financeiras no exterior' with no small-value exemption) was correctly identified, but the raw law text at planalto.gov.br was NOT independently re-fetched and quoted verbatim this session. Confirm literal Art. 8 wording with an accountant or a direct fetch before relying on this for a real filing. Losses can reportedly offset within the same asset class/period with carryforward, per Section 5.2's own warning this specific point needs accountant confirmation before the engine nets anything (see capital_gains.py loss_offset_flag, which never auto-nets).",
+  "regime": "foreign_no_exemption",
+  "rate": 0.15,
+  "monthly_exemption_applies": false,
+  "filed_via": "DAA_annual_not_monthly_DARF"
+}

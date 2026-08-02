@@ -121,7 +121,7 @@ async def provision_new_tenant(
 
         tenant_id = allocate_tenant_id()
         workspace = bootstrap_workspace(install_root, tenant_id, config_templates_dir)
-        append_tenant_config(config_toml_path, tenant_id, meta)
+        append_tenant_config(config_toml_path, tenant_id, meta, wa_id)
 
         trial = CreditTopUp(
             topup_id=f"trial_{tenant_id}",

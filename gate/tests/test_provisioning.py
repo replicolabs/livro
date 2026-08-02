@@ -16,6 +16,7 @@ META = MetaCredentials(
     verify_token="my-verify-token",
     app_secret="my-app-secret",
 )
+WA_ID = "5511999999999"
 
 
 def test_allocate_tenant_id_format():
@@ -56,7 +57,7 @@ def test_append_tenant_config_preserves_existing_content_and_comments(tmp_path):
         "sops_dir = \"/data/shared/sops\"\n"
     )
 
-    append_tenant_config(config_path, "t_abc12345", META)
+    append_tenant_config(config_path, "t_abc12345", META, WA_ID)
 
     result = config_path.read_text()
     assert "# Livro multi-tenant config" in result
@@ -67,7 +68,7 @@ def test_append_tenant_config_preserves_existing_content_and_comments(tmp_path):
 def test_append_tenant_config_writes_correct_whatsapp_block(tmp_path):
     config_path = tmp_path / "config.toml"
     config_path.write_text("")
-    append_tenant_config(config_path, "t_abc12345", META)
+    append_tenant_config(config_path, "t_abc12345", META, WA_ID)
 
     doc = tomlkit.parse(config_path.read_text())
     block = doc["channels"]["whatsapp"]["t_abc12345"]
@@ -76,12 +77,13 @@ def test_append_tenant_config_writes_correct_whatsapp_block(tmp_path):
     assert block["access_token"] == "EAAtest-access-token"
     assert block["verify_token"] == "my-verify-token"
     assert block["app_secret"] == "my-app-secret"
+    assert list(block["allowed_numbers"]) == [f"+{WA_ID}"]
 
 
 def test_append_tenant_config_writes_correct_agent_block(tmp_path):
     config_path = tmp_path / "config.toml"
     config_path.write_text("")
-    append_tenant_config(config_path, "t_abc12345", META)
+    append_tenant_config(config_path, "t_abc12345", META, WA_ID)
 
     doc = tomlkit.parse(config_path.read_text())
     agent = doc["agents"]["t_abc12345"]
@@ -98,7 +100,7 @@ def test_append_tenant_config_writes_correct_risk_profile_with_always_ask(tmp_pa
     """
     config_path = tmp_path / "config.toml"
     config_path.write_text("")
-    append_tenant_config(config_path, "t_abc12345", META)
+    append_tenant_config(config_path, "t_abc12345", META, WA_ID)
 
     doc = tomlkit.parse(config_path.read_text())
     risk = doc["risk_profiles"]["t_abc12345"]
@@ -112,8 +114,8 @@ def test_append_tenant_config_writes_correct_risk_profile_with_always_ask(tmp_pa
 def test_append_tenant_config_second_tenant_does_not_clobber_first(tmp_path):
     config_path = tmp_path / "config.toml"
     config_path.write_text("")
-    append_tenant_config(config_path, "t_first0001", META)
-    append_tenant_config(config_path, "t_second002", META)
+    append_tenant_config(config_path, "t_first0001", META, "5511999999991")
+    append_tenant_config(config_path, "t_second002", META, "5511999999992")
 
     doc = tomlkit.parse(config_path.read_text())
     assert "t_first0001" in doc["agents"]
@@ -126,8 +128,8 @@ def test_append_tenant_config_result_reparses_cleanly(tmp_path):
     """Round-trip sanity: whatever tomlkit wrote must itself be valid TOML."""
     config_path = tmp_path / "config.toml"
     config_path.write_text("[sop]\nsops_dir = \"/x\"\n")
-    append_tenant_config(config_path, "t_abc12345", META)
-    append_tenant_config(config_path, "t_xyz98765", META)
+    append_tenant_config(config_path, "t_abc12345", META, WA_ID)
+    append_tenant_config(config_path, "t_xyz98765", META, "5511999999993")
 
     # tomlkit.parse already raises on invalid TOML; a plain re-parse is the assertion.
     reparsed = tomlkit.parse(config_path.read_text())

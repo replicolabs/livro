@@ -87,7 +87,7 @@ def _ensure_table(parent, key: str):
     return parent[key]
 
 
-def append_tenant_config(config_toml_path: Path, tenant_id: str, meta: MetaCredentials) -> None:
+def append_tenant_config(config_toml_path: Path, tenant_id: str, meta: MetaCredentials, wa_id: str) -> None:
     """Load config.toml with tomlkit (preserves comments/formatting
     elsewhere in the file), append this tenant's three blocks, write back.
     """
@@ -101,6 +101,15 @@ def append_tenant_config(config_toml_path: Path, tenant_id: str, meta: MetaCrede
     whatsapp_block["access_token"] = meta.access_token
     whatsapp_block["verify_token"] = meta.verify_token
     whatsapp_block["app_secret"] = meta.app_secret
+    # ZeroClaw's WhatsApp channel silently drops any sender not on this
+    # list (zeroclaw-channels/src/whatsapp.rs:234, confirmed live -- it
+    # logs a WARN to its internal trace file only, invisible without
+    # --verbose, which cost real debugging time). Scoping this to just the
+    # tenant's own wa_id is also genuine defense-in-depth for hard
+    # isolation: even if the gate's alias routing were ever tricked into
+    # forwarding a different sender's message to this alias, ZeroClaw
+    # itself still refuses anyone but this tenant.
+    whatsapp_block["allowed_numbers"] = [f"+{wa_id}"]
     whatsapp[tenant_id] = whatsapp_block
 
     agents = _ensure_table(doc, "agents")

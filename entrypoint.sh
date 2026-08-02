@@ -18,7 +18,14 @@ ZEROCLAW_CONFIG_DIR="${ZEROCLAW_CONFIG_DIR:-/data/zeroclaw}"
 export ZEROCLAW_CONFIG_DIR
 mkdir -p "$ZEROCLAW_CONFIG_DIR"
 
-zeroclaw daemon --host 127.0.0.1 --port 42617 &
+# --verbose is a GLOBAL flag (must precede the subcommand, confirmed
+# against src/main.rs -- `#[arg(short, long, global = true)] verbose: bool`
+# on the top-level Cli struct, not Daemon's own args). Without it, ZeroClaw
+# routes every tracing event to an internal trace file only -- confirmed
+# live this session that this is why nothing ZeroClaw-side (agent turns,
+# provider errors) ever showed up in Railway's stdout-captured deploy logs,
+# even though the gate's own forwards were succeeding.
+zeroclaw --verbose daemon --host 127.0.0.1 --port 42617 &
 ZEROCLAW_PID=$!
 
 uvicorn gate.app:app --host 0.0.0.0 --port "${PORT:-8000}" --app-dir /app &

@@ -28,4 +28,12 @@ async def send_text_message(
         "text": {"body": text},
     }
     headers = {"Authorization": f"Bearer {access_token}"}
-    return await client.post(url, json=payload, headers=headers)
+    response = await client.post(url, json=payload, headers=headers)
+    # Meta's Send API failures (bad token scope, unverified number, no open
+    # session window, etc.) must not be swallowed -- every call site here is
+    # the gate's own direct reply (welcome/provisioning/top-up), so a failure
+    # means the tenant silently never hears back. Raising turns that into a
+    # visible 500 + traceback in the deploy logs instead of a 200 that lies
+    # about what actually happened.
+    response.raise_for_status()
+    return response

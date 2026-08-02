@@ -15,6 +15,8 @@ import os
 from dataclasses import dataclass, field
 from typing import Awaitable, Callable, Optional
 
+import logging
+
 import httpx
 from fastapi import FastAPI, Request, Response
 
@@ -22,6 +24,14 @@ from gate.forwarding import forward_to_zeroclaw
 from gate.parsing import InboundMessage, extract_inbound_message
 
 VERIFY_TOKEN = os.environ.get("LIVRO_GATE_VERIFY_TOKEN", "")
+
+# Without this, INFO/WARNING calls below are silently dropped -- nothing
+# else in the process configures logging, so Python's logging module falls
+# back to only printing WARNING+ via its no-op "handler of last resort",
+# and even that never reaches Railway's captured stdout the way print() or
+# uvicorn's own configured loggers do.
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("gate")
 
 
 # ── Dependency seam ──────────────────────────────────────────────────────
@@ -87,11 +97,16 @@ def create_app(deps: Optional[GateDependencies] = None) -> FastAPI:
         except ValueError:
             # Not JSON at all -- can't be a real Meta payload. Ack anyway
             # (200) so Meta doesn't retry something that will never parse.
+            logger.warning("webhook body was not valid JSON: %r", raw_body[:500])
             return Response(status_code=200)
 
         message = extract_inbound_message(parsed)
         if message is None:
-            # Status callback or unrecognized shape -- no-op, ack it.
+            # Status callback or unrecognized shape -- no-op, ack it. Logged
+            # at INFO (not silent) since this is indistinguishable from a
+            # real inbound message this parser failed to recognize --
+            # confirmed live that this ambiguity cost real debugging time.
+            logger.info("webhook payload produced no InboundMessage: %s", parsed)
             return Response(status_code=200)
 
         tenant_alias = await deps.resolve_tenant(message.wa_id)

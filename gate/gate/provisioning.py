@@ -101,14 +101,16 @@ def append_tenant_config(config_toml_path: Path, tenant_id: str, meta: MetaCrede
     whatsapp_block["access_token"] = meta.access_token
     whatsapp_block["verify_token"] = meta.verify_token
     whatsapp_block["app_secret"] = meta.app_secret
-    # ZeroClaw's WhatsApp channel silently drops any sender not on this
-    # list (zeroclaw-channels/src/whatsapp.rs:234, confirmed live -- it
-    # logs a WARN to its internal trace file only, invisible without
-    # --verbose, which cost real debugging time). Scoping this to just the
-    # tenant's own wa_id is also genuine defense-in-depth for hard
-    # isolation: even if the gate's alias routing were ever tricked into
-    # forwarding a different sender's message to this alias, ZeroClaw
-    # itself still refuses anyone but this tenant.
+    # `allowed_numbers` is a legacy V2 field -- confirmed live against a
+    # running instance (schema.rs's channel_external_peers, called from
+    # whatsapp.rs:186 is_number_allowed) that the CURRENT schema_version=3
+    # allowlist check reads exclusively from `Config::peer_groups`; a V2
+    # config's `allowed_numbers`/`allowed_users` only reaches peer_groups
+    # via `migrate_to_current`'s one-time fold, which never runs for a
+    # config tomlkit writes directly at schema_version=3. Left in place
+    # since it's harmless and self-documenting, but the peer_groups block
+    # below is what actually gates every sender -- omitting it means
+    # ZeroClaw silently drops every message from every tenant.
     whatsapp_block["allowed_numbers"] = [f"+{wa_id}"]
     whatsapp[tenant_id] = whatsapp_block
 
@@ -121,6 +123,13 @@ def append_tenant_config(config_toml_path: Path, tenant_id: str, meta: MetaCrede
     agent_block["runtime_profile"] = "default"
     agent_block["skill_bundles"] = ["livro"]
     agents[tenant_id] = agent_block
+
+    peer_groups = _ensure_table(doc, "peer_groups")
+    peer_group_block = tomlkit.table()
+    peer_group_block["channel"] = f"whatsapp.{tenant_id}"
+    peer_group_block["agents"] = [tenant_id]
+    peer_group_block["external_peers"] = [f"+{wa_id}"]
+    peer_groups[tenant_id] = peer_group_block
 
     risk_profiles = _ensure_table(doc, "risk_profiles")
     risk_block = tomlkit.table()

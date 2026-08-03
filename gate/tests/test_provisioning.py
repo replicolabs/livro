@@ -94,6 +94,23 @@ def test_append_tenant_config_writes_correct_agent_block(tmp_path):
     assert agent["skill_bundles"] == ["livro"]
 
 
+def test_append_tenant_config_writes_correct_peer_group_block(tmp_path):
+    """The actual live allowlist gate for schema_version=3 configs is
+    Config::peer_groups, not channels.whatsapp.<alias>.allowed_numbers --
+    confirmed against running ZeroClaw source (channel_external_peers).
+    Without this block every sender is silently dropped for every tenant.
+    """
+    config_path = tmp_path / "config.toml"
+    config_path.write_text("")
+    append_tenant_config(config_path, "t_abc12345", META, WA_ID)
+
+    doc = tomlkit.parse(config_path.read_text())
+    group = doc["peer_groups"]["t_abc12345"]
+    assert group["channel"] == "whatsapp.t_abc12345"
+    assert list(group["agents"]) == ["t_abc12345"]
+    assert list(group["external_peers"]) == [f"+{WA_ID}"]
+
+
 def test_append_tenant_config_writes_correct_risk_profile_with_always_ask(tmp_path):
     """The corrected posture: shell/http_request go back to always_ask now
     that Cloud API actually supports request_approval, unlike Web mode.

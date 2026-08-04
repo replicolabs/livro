@@ -21,6 +21,24 @@ mkdir -p "$ZEROCLAW_CONFIG_DIR"
 CONFIG_TOML="$ZEROCLAW_CONFIG_DIR/config.toml"
 touch "$CONFIG_TOML"
 
+# Without an explicit schema_version, ZeroClaw treats the file as legacy
+# V1 and re-runs its V1->V3 auto-migration IN MEMORY on every single boot
+# and every /admin/reload (confirmed live via the log line "Config ...
+# is schema_version 1; auto-migrated to 3 in memory. Run `zeroclaw config
+# migrate` to commit the migration to disk."). That migration pass is
+# lossy for a config tomlkit writes directly in V3 shape -- confirmed
+# live it spuriously reported an already-populated
+# [providers.models.anthropic.default] as empty, and a freshly-written
+# tenant's own [channels.whatsapp.<id>] block (present on disk,
+# verified via `cat`) as a dangling_reference, in the same boot. Stamping
+# schema_version = 3 up front skips the migration path entirely -- must
+# be the first line, before any [table] header, since it's a bare
+# root-level key.
+if ! grep -q '^schema_version = 3$' "$CONFIG_TOML"; then
+    { echo 'schema_version = 3'; echo; cat "$CONFIG_TOML"; } > "$CONFIG_TOML.tmp"
+    mv "$CONFIG_TOML.tmp" "$CONFIG_TOML"
+fi
+
 # Every tenant's agent block (written by gate/provisioning.py) hardcodes
 # model_provider = "anthropic.default", but the gate only ever appends
 # per-tenant blocks -- nothing seeds the shared [providers.models.*] table

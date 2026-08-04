@@ -84,6 +84,7 @@ if ! grep -q '^\[sop\]' "$CONFIG_TOML"; then
 [sop]
 sops_dir = "/app/sops"
 maintenance_interval_secs = 60
+max_concurrent_total = 20
 EOF
 fi
 

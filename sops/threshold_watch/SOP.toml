@@ -2,8 +2,8 @@
 name = "threshold_watch"
 description = "Proactively flag approaching the IN 1888 / DeCripto monthly self-report threshold before it is crossed."
 version = "0.1.0"
-max_concurrent = 1
-admission_policy = "coalesce"
+max_concurrent = 10
+admission_policy = "hold"
 
 [[triggers]]
 type = "cron"

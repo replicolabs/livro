@@ -70,6 +70,23 @@ if ! grep -q '^\[runtime_profiles\.default\]' "$CONFIG_TOML"; then
 EOF
 fi
 
+# [sop] is missing too -- not a dangling_reference (sops_dir is a path,
+# not a cross-table alias) so it fails silently rather than logging a
+# validation warning: no sops_dir means the cron-triggered SOPs
+# (watch_payment, monthly_reminder, threshold_watch, backup_export) just
+# never run. config/config.toml.example documents sops_dir MUST be
+# absolute -- it resolves against the process's CWD at the moment each
+# `zeroclaw` command runs, not the install root -- so use the same
+# absolute path the Dockerfile COPies sops/ to (WORKDIR /app).
+if ! grep -q '^\[sop\]' "$CONFIG_TOML"; then
+    cat >> "$CONFIG_TOML" <<'EOF'
+
+[sop]
+sops_dir = "/app/sops"
+maintenance_interval_secs = 60
+EOF
+fi
+
 # --verbose is a GLOBAL flag (must precede the subcommand, confirmed
 # against src/main.rs -- `#[arg(short, long, global = true)] verbose: bool`
 # on the top-level Cli struct, not Daemon's own args). Without it, ZeroClaw

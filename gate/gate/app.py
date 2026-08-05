@@ -18,7 +18,7 @@ from typing import Awaitable, Callable, Optional
 import logging
 
 import httpx
-from fastapi import FastAPI, Request, Response
+from fastapi import BackgroundTasks, FastAPI, Request, Response
 
 from gate.forwarding import forward_to_zeroclaw
 from gate.parsing import InboundMessage, extract_inbound_message
@@ -87,8 +87,29 @@ def create_app(deps: Optional[GateDependencies] = None) -> FastAPI:
             return Response(content=params.get("hub.challenge", ""), media_type="text/plain")
         return Response(status_code=403)
 
+    async def _forward_and_log(tenant_alias: str, raw_body: bytes, headers: dict) -> None:
+        # Runs after the response to Meta has already been sent (FastAPI
+        # BackgroundTasks). ZeroClaw's own handler awaits the full agent
+        # turn -- tool calls, LLM iterations, sending the reply -- before
+        # it responds (confirmed against source), which routinely exceeds
+        # any timeout Meta would tolerate on the webhook itself. Meta only
+        # needs a fast ack; the actual reply reaches the user via
+        # ZeroClaw's own outbound WhatsApp Send API call, independent of
+        # this response entirely.
+        try:
+            upstream = await forward_to_zeroclaw(
+                tenant_alias, raw_body, headers, deps.http_client, deps.zeroclaw_base_url
+            )
+            if upstream.status_code != 200:
+                logger.warning(
+                    "zeroclaw forward for %s returned %s: %r",
+                    tenant_alias, upstream.status_code, upstream.text[:500],
+                )
+        except Exception:
+            logger.exception("zeroclaw forward for %s failed", tenant_alias)
+
     @app.post("/webhook")
-    async def receive(request: Request) -> Response:
+    async def receive(request: Request, background_tasks: BackgroundTasks) -> Response:
         raw_body = await request.body()
         headers = dict(request.headers)
 
@@ -118,10 +139,8 @@ def create_app(deps: Optional[GateDependencies] = None) -> FastAPI:
             await deps.on_insufficient_balance(tenant_alias, message)
             return Response(status_code=200)
 
-        upstream = await forward_to_zeroclaw(
-            tenant_alias, raw_body, headers, deps.http_client, deps.zeroclaw_base_url
-        )
-        return Response(status_code=upstream.status_code)
+        background_tasks.add_task(_forward_and_log, tenant_alias, raw_body, headers)
+        return Response(status_code=200)
 
     return app
 

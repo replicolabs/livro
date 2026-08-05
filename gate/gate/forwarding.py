@@ -31,6 +31,20 @@ def select_forward_headers(headers: dict[str, str]) -> dict[str, str]:
     return {k: v for k, v in headers.items() if k.lower() in FORWARD_HEADER_NAMES}
 
 
+# ZeroClaw's own /whatsapp/{alias} handler (confirmed against source,
+# zeroclaw-gateway/src/lib.rs::handle_whatsapp_message_impl) awaits the
+# ENTIRE agent turn -- tool calls, LLM iterations, and sending the reply
+# via WhatsApp's Send API -- inline, before returning its own HTTP
+# response. httpx's default timeout (5s total) is nowhere near enough for
+# a real turn; confirmed live it caused this call to raise on anything
+# past a trivial greeting, which the caller must never await inline
+# before acking Meta (see app.py's use of BackgroundTasks). A real turn
+# can still legitimately run past this if it invokes several tools in
+# sequence, so this is generous, not tight -- bounded only to avoid a
+# truly wedged connection lingering forever.
+FORWARD_TIMEOUT_SECS = 300.0
+
+
 async def forward_to_zeroclaw(
     tenant_alias: str,
     raw_body: bytes,
@@ -44,4 +58,9 @@ async def forward_to_zeroclaw(
     sends these exact bytes on the wire with no re-encoding.
     """
     url = f"{base_url}/whatsapp/{tenant_alias}"
-    return await client.post(url, content=raw_body, headers=select_forward_headers(headers))
+    return await client.post(
+        url,
+        content=raw_body,
+        headers=select_forward_headers(headers),
+        timeout=FORWARD_TIMEOUT_SECS,
+    )

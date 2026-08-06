@@ -1,0 +1,14 @@
+{
+  "rewrites": [
+    { "source": "/docs", "destination": "/docs.pdf" }
+  ],
+  "headers": [
+    {
+      "source": "/docs.pdf",
+      "headers": [
+        { "key": "Content-Type", "value": "application/pdf" },
+        { "key": "Content-Disposition", "value": "inline" }
+      ]
+    }
+  ]
+}

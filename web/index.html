@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Livro. Bookkeeping and taxes inside WhatsApp.</title>
+<meta name="description" content="Livro is a WhatsApp finance agent for Brazilian freelancers paid in USDC. It tracks income and expenses, calculates taxes owed, and confirms payments against the official exchange rate.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Livro home">
+      <svg class="brand-mark" viewBox="0 0 28 22" fill="none" aria-hidden="true">
+        <path d="M14 4.2C11.3 2.4 7.7 1.6 2 2.1v15.6c5.7-.5 9.3.3 12 2.1 2.7-1.8 6.3-2.6 12-2.1V2.1c-5.7-.5-9.3.3-12 2.1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M14 4.2v15.6" stroke="currentColor" stroke-width="1.6"/>
+      </svg>
+      <span class="brand-name">Livro</span>
+    </a>
+
+    <div class="header-actions">
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle color theme">
+        <svg id="theme-icon-dark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        </svg>
+        <svg id="theme-icon-light" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="display:none">
+          <circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M12 2.5v2.4M12 19.1v2.4M21.5 12h-2.4M4.9 12H2.5M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7M18.4 18.4l-1.7-1.7M7.3 7.3 5.6 5.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <a class="pill-link" href="https://github.com/replicolabs/livro" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        <span>GitHub</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">WhatsApp finance agent &middot; Brazil</p>
+
+      <h1 class="headline">Bookkeeping and taxes, handled inside <em>WhatsApp</em>.</h1>
+
+      <p class="subtext">
+        Livro tracks income and expenses, calculates the tax you actually owe, and confirms
+        every payment against the official exchange rate. Built for Brazilian freelancers
+        paid in USDC. Nothing to install, no wallet keys required.
+      </p>
+
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://wa.me/2347048624027?text=Oi" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          <span>Message Livro on WhatsApp</span>
+        </a>
+
+        <a class="btn btn-secondary" href="#" id="blog-link" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.21 0A4.201 4.201 0 0 0 0 4.21v15.58A4.201 4.201 0 0 0 4.21 24h15.58A4.201 4.201 0 0 0 24 19.79v-1.093c-.137.013-.278.02-.422.02-2.577 0-4.027-2.146-4.09-4.832a7.592 7.592 0 0 1 .022-.708c.093-1.186.475-2.241 1.105-3.022a3.885 3.885 0 0 1 1.395-1.1c.468-.237 1.127-.367 1.664-.367h.023c.101 0 .202.004.303.01V4.211A4.201 4.201 0 0 0 19.79 0Zm.198 5.583h4.165l3.588 8.435 3.59-8.435h3.864v.146l-.019.004c-.705.16-1.063.397-1.063 1.254h-.003l.003 10.274c.06.676.424.885 1.063 1.03l.02.004v.145h-4.923v-.145l.019-.005c.639-.144.994-.353 1.054-1.03V7.267l-4.745 11.15h-.261L6.15 7.569v9.445c0 .857.358 1.094 1.063 1.253l.02.004v.147H4.405v-.147l.019-.004c.705-.16 1.065-.397 1.065-1.253V6.987c0-.857-.358-1.094-1.064-1.254l-.018-.004zm19.25 3.668c-1.086.023-1.733 1.323-1.813 3.124H24V9.298a1.378 1.378 0 0 0-.342-.047Zm-1.862 3.632c-.1 1.756.86 3.239 2.204 3.634v-3.634z"/></svg>
+          <span>Read the blog</span>
+        </a>
+      </div>
+
+      <a class="docs-link" href="/docs" target="_blank" rel="noopener">
+        Read the docs
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <div class="phone">
+        <div class="phone-chrome">
+          <div class="phone-avatar">
+            <svg viewBox="0 0 28 22" fill="none"><path d="M14 4.2C11.3 2.4 7.7 1.6 2 2.1v15.6c5.7-.5 9.3.3 12 2.1 2.7-1.8 6.3-2.6 12-2.1V2.1c-5.7-.5-9.3.3-12 2.1Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 4.2v15.6" stroke="currentColor" stroke-width="1.8"/></svg>
+          </div>
+          <div class="phone-id">
+            <span class="name">Livro</span>
+            <span class="status">online</span>
+          </div>
+        </div>
+
+        <div class="phone-thread">
+          <div class="bubble out">
+            Recebi 500 USDC de um cliente hoje
+            <div class="meta">
+              09:41
+              <svg viewBox="0 0 24 24" fill="none"><path d="M2 12.5 6 16l6-8M10 12.5l4 3.5 8-11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+
+          <div class="bubble in">
+            Anotado! Recebeu 500 USDC hoje. Quer que eu registre isso no seu controle
+            financeiro e calcule o valor em reais na cota&ccedil;&atilde;o de hoje?
+            <div class="meta">09:41</div>
+          </div>
+
+          <div class="typing" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</div>
+<script src="script.js"></script>
+</body>
+</html>
